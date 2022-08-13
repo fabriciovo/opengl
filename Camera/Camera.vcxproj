@@ -22,8 +22,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{b4fb2e12-b697-4da7-8e0f-b1d3d6d20c77}</ProjectGuid>
-    <RootNamespace>Camera</RootNamespace>
+    <RootNamespace>Window</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Window</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -72,23 +73,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
-    <IncludePath>C:\Users\fabri\GitHub\OpenGL\Camera\Libraries\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\fabri\GitHub\OpenGL\Camera\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\fabri\GitHub\OpenGL\Libraries\includes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\fabri\GitHub\OpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
-    <IncludePath>C:\Users\fabri\GitHub\OpenGL\Camera\Libraries\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\fabri\GitHub\OpenGL\Camera\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\fabri\GitHub\OpenGL\Libraries\includes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\fabri\GitHub\OpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
-    <IncludePath>C:\Users\fabri\GitHub\OpenGL\Camera\Libraries\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\fabri\GitHub\OpenGL\Camera\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\fabri\GitHub\OpenGL\Libraries\includes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\fabri\GitHub\OpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
-    <IncludePath>C:\Users\fabri\GitHub\OpenGL\Camera\Libraries\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\fabri\GitHub\OpenGL\Camera\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\fabri\GitHub\OpenGL\Libraries\includes;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\fabri\GitHub\OpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
