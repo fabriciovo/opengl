@@ -18,6 +18,13 @@ public:
 	vec3 Position;
 	vec3 Orientaion = vec3(0.0f, 0.0f, -1.0f);
 	vec3 Up = vec3(0.0f, 1.0f, 0.0f);
+
+
+	int width;
+	int heigth;
+
+
+	float speed = 0;
 };
 
 
