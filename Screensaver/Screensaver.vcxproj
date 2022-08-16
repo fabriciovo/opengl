@@ -21,10 +21,9 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{b4fb2e12-b697-4da7-8e0f-b1d3d6d20c77}</ProjectGuid>
-    <RootNamespace>Window</RootNamespace>
+    <ProjectGuid>{574A3AF8-7685-4D94-9ED9-F21F90DE65AB}</ProjectGuid>
+    <RootNamespace>Screensaver</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Window</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -72,24 +71,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
-    <IncludePath>C:\Users\fabri\GitHub\OpenGL\Libraries\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\fabri\GitHub\OpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)/Libraries/includes;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/Libraries/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
-    <IncludePath>C:\Users\fabri\GitHub\OpenGL\Libraries\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\fabri\GitHub\OpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)/Libraries/includes;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/Libraries/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
-    <IncludePath>C:\Users\fabri\GitHub\OpenGL\Libraries\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\fabri\GitHub\OpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)/Libraries/includes;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/Libraries/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
-    <IncludePath>C:\Users\fabri\GitHub\OpenGL\Libraries\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\fabri\GitHub\OpenGL\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)/Libraries/includes;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)/Libraries/lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -152,8 +147,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="glad.c" />
+    <ClCompile Include="..\glad.c" />
+    <ClCompile Include="EBO.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="shaderClass.cpp" />
+    <ClCompile Include="VAO.cpp" />
+    <ClCompile Include="VBO.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="default.frag" />
+    <None Include="default.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EBO.h" />
+    <ClInclude Include="shaderClass.h" />
+    <ClInclude Include="VAO.h" />
+    <ClInclude Include="VBO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

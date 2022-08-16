@@ -84,8 +84,8 @@ int main()
 	float speedY = 1.0f;
 	float speedX = 1.0f;
 
-	float lastPos = 0.0f;
-
+	float lastPosX = 0.0f;
+	float lastPosY = 0.0f;
 	while (!glfwWindowShouldClose(window))
 	{
 		static double previousSeconds = glfwGetTime();
@@ -93,12 +93,29 @@ int main()
 		double elapsedSeconds = currentSeconds - previousSeconds;
 		if (elapsedSeconds >= 0.0f) {
 			previousSeconds = currentSeconds;
-			if (fabs(lastPos) > 1.0f) {
+			if (fabs(lastPosX) > 1.0f) {
 				speedX = -speedX;
+
 			}
-			vertices[12] = elapsedSeconds * speedX + lastPos;
-			lastPos = vertices[12];
+			else if (fabs(lastPosX) <= 0) {
+				speedX = speedX;
+			}
+
+			if (fabs(lastPosY) < 1.0f) {
+				speedY = speedY;
+
+			}
+			else if (fabs(lastPosY) >= 0) {
+				speedY = -speedY;
+			}
+	
+			vertices[12] = elapsedSeconds * speedX + lastPosX;
+			lastPosX = vertices[12];
+
+			vertices[13] = elapsedSeconds * speedY + lastPosY;
+			lastPosY = vertices[13];
 		}
+
 
 		glUniformMatrix4fv(matrixLocation, 1, GL_FALSE, vertices);
 
