@@ -1,6 +1,7 @@
 #include<iostream>
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
+#include<glm/glm.hpp>
 
 #include"shaderClass.h"
 #include"VAO.h"
@@ -10,21 +11,33 @@
 
 
 // Vertices coordinates
-GLfloat vertices[] =
-{ //               COORDINATES              
+GLfloat vertices[] = {
 		0.3f,  -0.3f, 0.0f, 0.0f,
-		0.3f, 0.3f, 0.0f, 0.0f, 
+		0.3f, 0.3f, 0.0f, 0.0f,
 		0.0f,  0.0f, 1.0f, 0.0f,
 		0.1f,  0.0f, 0.0f, 1.0f,
 };
 
+GLfloat vertices2[] =
+{ //               COORDINATES              
+		0.7f,  -1.3f, 0.0f, 0.0f,
+		1.7f,  1.7f, 0.0f, 0.0f,
+		0.0f,  0.0f, 2.0f, 0.0f,
+		0.25f,  0.25f, 0.0f, 1.0f,
+};
+
+GLfloat cores[] =
+{ //     COLORS              
+		1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 1.0f
+};
 
 
 int main()
 {
 	// Initialize GLFW
 	glfwInit();
-
 	// Tell GLFW what version of OpenGL we are using 
 	// In this case we are using OpenGL 3.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -51,41 +64,42 @@ int main()
 	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
 	glViewport(0, 0, 800, 800);
 
-
-
 	// Generates Shader object using shaders defualt.vert and default.frag
 	Shader shaderProgram("default.vert", "default.frag");
 
-	
 	// Generates Vertex Array Object and binds it
 	VAO VAO1;
 	VAO1.Bind();
 
 	// Generates Vertex Buffer Object and links it to vertices
 	VBO VBO1(vertices, sizeof(vertices));
+	VBO VBO2(cores, sizeof(cores));
+
 	// Generates Element Buffer Object and links it to indices
 	//EBO EBO1(indices, sizeof(indices));
 
 	// Links VBO to VAO
 	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 0,NULL );
-
+	VAO1.LinkAttrib(VBO2, 1, 3, GL_FLOAT, 0, NULL);
 	// Unbind all to prevent accidentally modifying them
 	VAO1.Unbind();
 	VBO1.Unbind();
+	VBO2.Unbind();
 	//EBO1.Unbind();
 
-
+	
+	
 	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
 	// Main while loop
-
-
 	int matrixLocation = glGetUniformLocation(shaderProgram.ID, "matrix");
 	float speedY = 1.0f;
 	float speedX = 1.0f;
 
 	float lastPosX = 0.0f;
 	float lastPosY = 0.0f;
+	float px = vertices[12];
+	float py = vertices[13];
 	while (!glfwWindowShouldClose(window))
 	{
 		static double previousSeconds = glfwGetTime();
@@ -93,27 +107,33 @@ int main()
 		double elapsedSeconds = currentSeconds - previousSeconds;
 		if (elapsedSeconds >= 0.0f) {
 			previousSeconds = currentSeconds;
-			if (fabs(lastPosX) > 1.0f) {
-				speedX = -speedX;
+			float cx = 0, cy = 0;
+			float ppx = elapsedSeconds * speedX + px;
+			float ppy = elapsedSeconds * speedY + py;
 
-			}
-			else if (fabs(lastPosX) <= 0) {
-				speedX = speedX;
+
+			if (fabs(ppx) >= 1) {
+				speedX = glm::reflect(ppx, ppy);
 			}
 
-			if (fabs(lastPosY) < 1.0f) {
-				speedY = speedY;
-
+			if (fabs(ppx) <= 0) {
+				speedX = glm::reflect(ppx, ppy);
 			}
-			else if (fabs(lastPosY) >= 0) {
-				speedY = -speedY;
-			}
-	
-			vertices[12] = elapsedSeconds * speedX + lastPosX;
-			lastPosX = vertices[12];
 
-			vertices[13] = elapsedSeconds * speedY + lastPosY;
-			lastPosY = vertices[13];
+
+			if (fabs(ppy) >= 1) {
+				speedY = glm::reflect(ppy, ppx);
+			}
+
+			if (fabs(ppy) <= 0) {
+				speedY = glm::reflect(ppy, ppx);
+			}
+
+			vertices[12] = elapsedSeconds * speedX + px;
+			px = vertices[12];
+
+			vertices[13] = elapsedSeconds * speedY + py;
+			py = vertices[13];
 		}
 
 
@@ -130,7 +150,7 @@ int main()
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices
-		// glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
