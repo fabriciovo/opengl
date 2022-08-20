@@ -84,7 +84,7 @@ int main()
 	//EBO EBO1(indices, sizeof(indices));
 
 	// Links VBO to VAO
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 0,NULL );
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 0, NULL);
 	VAO1.LinkAttrib(VBO2, 1, 3, GL_FLOAT, 0, NULL);
 	// Unbind all to prevent accidentally modifying them
 	VAO1.Unbind();
@@ -92,8 +92,8 @@ int main()
 	VBO2.Unbind();
 	//EBO1.Unbind();
 
-	
-	
+
+
 	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
 	// Main while loop
@@ -118,7 +118,7 @@ int main()
 
 
 			if (fabs(ppx) >= 1) {
-				speedX = glm::reflect(ppx, ppy) ;
+				speedX = glm::reflect(ppx, ppy);
 			}
 
 			if (fabs(ppx) <= 0) {
@@ -127,7 +127,7 @@ int main()
 
 
 			if (fabs(ppy) >= 1) {
-				speedY = glm::reflect(ppy, ppx) ;
+				speedY = glm::reflect(ppy, ppx);
 			}
 
 			if (fabs(ppy) <= 0) {
@@ -151,7 +151,7 @@ int main()
 		// Tell OpenGL which Shader Program we want to use
 		shaderProgram.Activate();
 		glUniform1f(uniID, 0.5f);
-		
+
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices
