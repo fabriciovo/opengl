@@ -5,11 +5,9 @@ VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Window", "Window\Window.vcxproj", "{B4FB2E12-B697-4DA7-8E0F-B1D3D6D20C77}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Triangle", "Triangle\Triangle.vcxproj", "{1DCC0A7C-4C74-4683-A676-1A30C93725C9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tirangle3D", "Triangle\Triangle.vcxproj", "{1DCC0A7C-4C74-4683-A676-1A30C93725C9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Screensaver", "Screensaver\Screensaver.vcxproj", "{574A3AF8-7685-4D94-9ED9-F21F90DE65AB}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3D", "3D\3D.vcxproj", "{18BE8BDC-9995-4619-BFBA-7F2639D612BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,14 +41,6 @@ Global
 		{574A3AF8-7685-4D94-9ED9-F21F90DE65AB}.Release|x64.Build.0 = Release|x64
 		{574A3AF8-7685-4D94-9ED9-F21F90DE65AB}.Release|x86.ActiveCfg = Release|Win32
 		{574A3AF8-7685-4D94-9ED9-F21F90DE65AB}.Release|x86.Build.0 = Release|Win32
-		{18BE8BDC-9995-4619-BFBA-7F2639D612BC}.Debug|x64.ActiveCfg = Debug|x64
-		{18BE8BDC-9995-4619-BFBA-7F2639D612BC}.Debug|x64.Build.0 = Debug|x64
-		{18BE8BDC-9995-4619-BFBA-7F2639D612BC}.Debug|x86.ActiveCfg = Debug|Win32
-		{18BE8BDC-9995-4619-BFBA-7F2639D612BC}.Debug|x86.Build.0 = Debug|Win32
-		{18BE8BDC-9995-4619-BFBA-7F2639D612BC}.Release|x64.ActiveCfg = Release|x64
-		{18BE8BDC-9995-4619-BFBA-7F2639D612BC}.Release|x64.Build.0 = Release|x64
-		{18BE8BDC-9995-4619-BFBA-7F2639D612BC}.Release|x86.ActiveCfg = Release|Win32
-		{18BE8BDC-9995-4619-BFBA-7F2639D612BC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

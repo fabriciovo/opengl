@@ -16,6 +16,9 @@
     <Filter Include="Arquivos de Recurso\Shaders">
       <UniqueIdentifier>{56728320-94f6-40c6-887f-2bab89bd80a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Arquivos de Recurso\Textures">
+      <UniqueIdentifier>{adefec2d-e7e2-4a81-96f9-d141ba23a851}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -34,6 +37,12 @@
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
     <ClCompile Include="EBO.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
   </ItemGroup>
@@ -58,5 +67,13 @@
     <ClInclude Include="EBO.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="pop_cat.png">
+      <Filter>Arquivos de Recurso\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
