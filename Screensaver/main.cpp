@@ -52,7 +52,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create a GLFWwindow object of 800 by 800 pixels, naming it "Window"
-	GLFWwindow* window = glfwCreateWindow(800, 800, "Window", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(800, 800, "Screensaver", NULL, NULL);
 	// Error check if the window fails to create
 	if (window == NULL)
 	{
