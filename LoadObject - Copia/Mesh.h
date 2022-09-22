@@ -1,258 +1,130 @@
 #pragma once
+#include <glad/glad.h> // holds all OpenGL type declarations
 
-#include<iostream>
-#include<vector>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-#include"Vertex.h"
-#include"Primitives.h"
-#include"Shader.h"
-#include"Texture.h"
-#include"Material.h"
+#include "Shader.h"
 
-class Mesh
-{
-private:
-	Vertex * vertexArray;
-	unsigned nrOfVertices;
-	GLuint* indexArray;
-	unsigned nrOfIndices;
+#include <string>
+#include <vector>
 
-	GLuint VAO;
-	GLuint VBO;
-	GLuint EBO;
+struct Vertex {
+    // position
+    glm::vec3 Position;
+    // normal
+    glm::vec3 Normal;
+    // texCoords
+    glm::vec2 TexCoords;
+    // tangent
+    glm::vec3 Tangent;
+    // bitangent
+    glm::vec3 Bitangent;
+};
 
-	glm::vec3 position;
-	glm::vec3 origin;
-	glm::vec3 rotation;
-	glm::vec3 scale;
+struct Texture {
+    unsigned int id;
+    std::string type;
+    std::string path;
+};
 
-	glm::mat4 ModelMatrix;
-
-	void initVAO()
-	{
-		//Create VAO
-		glCreateVertexArrays(1, &this->VAO);
-		glBindVertexArray(this->VAO);
-
-		//GEN VBO AND BIND AND SEND DATA
-		glGenBuffers(1, &this->VBO);
-		glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-		glBufferData(GL_ARRAY_BUFFER, this->nrOfVertices * sizeof(Vertex), this->vertexArray, GL_STATIC_DRAW);
-
-		//GEN EBO AND BIND AND SEND DATA
-		if (this->nrOfIndices > 0)
-		{
-			glGenBuffers(1, &this->EBO);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->nrOfIndices * sizeof(GLuint), this->indexArray, GL_STATIC_DRAW);
-		}
-
-		//SET VERTEXATTRIBPOINTERS AND ENABLE (INPUT ASSEMBLY)
-		//Position
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
-		glEnableVertexAttribArray(0);
-		//Color
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
-		glEnableVertexAttribArray(1);
-		//Texcoord
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
-		glEnableVertexAttribArray(2);
-		//Normal
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
-		glEnableVertexAttribArray(3);
-
-		//BIND VAO 0
-		glBindVertexArray(0);
-	}
-
-	void updateUniforms(Shader* shader)
-	{
-		shader->setMat4fv(this->ModelMatrix, "ModelMatrix");
-	}
-
-	void updateModelMatrix()
-	{
-		this->ModelMatrix = glm::mat4(1.f);
-		this->ModelMatrix = glm::translate(this->ModelMatrix, this->origin);
-		this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.x), glm::vec3(1.f, 0.f, 0.f));
-		this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.y), glm::vec3(0.f, 1.f, 0.f));
-		this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.z), glm::vec3(0.f, 0.f, 1.f));
-		this->ModelMatrix = glm::translate(this->ModelMatrix, this->position - this->origin);
-		this->ModelMatrix = glm::scale(this->ModelMatrix, this->scale);
-	}
-
+class Mesh {
 public:
-	Mesh(
-		Vertex* vertexArray,
-		const unsigned& nrOfVertices,
-		GLuint* indexArray,
-		const unsigned& nrOfIndices,
-		glm::vec3 position = glm::vec3(0.f),
-		glm::vec3 origin = glm::vec3(0.f),
-		glm::vec3 rotation = glm::vec3(0.f),
-		glm::vec3 scale = glm::vec3(1.f))
-	{
-		this->position = position;
-		this->origin = origin;
-		this->rotation = rotation;
-		this->scale = scale;
+    //mesh Data
+    std::vector<Vertex>       vertices;
+    std::vector<unsigned int> indices;
+    std::vector<Texture>      textures;
+    unsigned int VAO;
 
-		this->nrOfVertices = nrOfVertices;
-		this->nrOfIndices = nrOfIndices;
+    //constructor
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
+    {
+        this->vertices = vertices;
+        this->indices = indices;
+        this->textures = textures;
 
-		this->vertexArray = new Vertex[this->nrOfVertices];
-		for (size_t i = 0; i < nrOfVertices; i++)
-		{
-			this->vertexArray[i] = vertexArray[i];
-		}
+        //now that we have all the required data, set the vertex buffers and its attribute pointers.
+        setupMesh();
+    }
 
-		this->indexArray = new GLuint[this->nrOfIndices];
-		for (size_t i = 0; i < nrOfIndices; i++)
-		{
-			this->indexArray[i] = indexArray[i];
-		}
+    //render the mesh
+    void Draw(Shader& shader)
+    {
+        //bind appropriate textures
+        unsigned int diffuseNr = 1;
+        unsigned int specularNr = 1;
+        unsigned int normalNr = 1;
+        unsigned int heightNr = 1;
+        for (unsigned int i = 0; i < textures.size(); i++)
+        {
+            glActiveTexture(GL_TEXTURE0 + i); //active proper texture unit before binding
+            //retrieve texture number (the N in diffuse_textureN)
+            std::string number;
+            std::string name = textures[i].type;
+            if (name == "texture_diffuse")
+                number = std::to_string(diffuseNr++);
+            else if (name == "texture_specular")
+                number = std::to_string(specularNr++); //transfer unsigned int to stream
+            else if (name == "texture_normal")
+                number = std::to_string(normalNr++); //transfer unsigned int to stream
+            else if (name == "texture_height")
+                number = std::to_string(heightNr++); //transfer unsigned int to stream
 
-		this->initVAO();
-		this->updateModelMatrix();
-	}
+            //now set the sampler to the correct texture unit
+            glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
+            //and finally bind the texture
+            glBindTexture(GL_TEXTURE_2D, textures[i].id);
+        }
 
-	Mesh(
-		Primitive* primitive,
-		glm::vec3 position = glm::vec3(0.f),
-		glm::vec3 origin = glm::vec3(0.f),
-		glm::vec3 rotation = glm::vec3(0.f),
-		glm::vec3 scale = glm::vec3(1.f))
-	{
-		this->position = position;
-		this->origin = origin;
-		this->rotation = rotation;
-		this->scale = scale;
+        //draw mesh
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
 
-		this->nrOfVertices = primitive->getNrOfVertices();
-		this->nrOfIndices = primitive->getNrOfIndices();
+        //always good practice to set everything back to defaults once configured.
+        glActiveTexture(GL_TEXTURE0);
+    }
 
-		this->vertexArray = new Vertex[this->nrOfVertices];
-		for (size_t i = 0; i < this->nrOfVertices; i++)
-		{
-			this->vertexArray[i] = primitive->getVertices()[i];
-		}
+private:
+    //render data 
+    unsigned int VBO, EBO;
 
-		this->indexArray = new GLuint[this->nrOfIndices];
-		for (size_t i = 0; i < this->nrOfIndices; i++)
-		{
-			this->indexArray[i] = primitive->getIndices()[i];
-		}
+    //initializes all the buffer objects/arrays
+    void setupMesh()
+    {
+        //create buffers/arrays
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+        glGenBuffers(1, &EBO);
 
-		this->initVAO();
-		this->updateModelMatrix();
-	}
+        glBindVertexArray(VAO);
+        //load data into vertex buffers
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        //A great thing about structs is that their memory layout is sequential for all its items.
+        //The effect is that we can simply pass a pointer to the struct and it translates perfectly to a glm::vec3/2 array which
+        //again translates to 3/2 floats which translates to a byte array.
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
-	Mesh(const Mesh& obj)
-	{
-		this->position = obj.position;
-		this->origin = obj.origin;
-		this->rotation = obj.rotation;
-		this->scale = obj.scale;
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
-		this->nrOfVertices = obj.nrOfVertices;
-		this->nrOfIndices = obj.nrOfIndices;
+        //set the vertex attribute pointers
+        //vertex Positions
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+        //vertex normals
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+        //vertex texture coords
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+        //vertex tangent
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
+        //vertex bitangent
+        glEnableVertexAttribArray(4);
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
 
-		this->vertexArray = new Vertex[this->nrOfVertices];
-		for (size_t i = 0; i < this->nrOfVertices; i++)
-		{
-			this->vertexArray[i] = obj.vertexArray[i];
-		}
-
-		this->indexArray = new GLuint[this->nrOfIndices];
-		for (size_t i = 0; i < this->nrOfIndices; i++)
-		{
-			this->indexArray[i] = obj.indexArray[i];
-		}
-
-		this->initVAO();
-		this->updateModelMatrix();
-	}
-
-	~Mesh()
-	{
-		glDeleteVertexArrays(1, &this->VAO);
-		glDeleteBuffers(1, &this->VBO);
-
-		if (this->nrOfIndices > 0)
-		{
-			glDeleteBuffers(1, &this->EBO);
-		}
-
-		delete[] this->vertexArray;
-		delete[] this->indexArray;
-	}
-
-	//Accessors
-
-	//Modifiers
-	void setPosition(const glm::vec3 position)
-	{
-		this->position = position;
-	}
-
-	void setOrigin(const glm::vec3 origin)
-	{
-		this->origin = origin;
-	}
-
-	void setRotation(const glm::vec3 rotation)
-	{
-		this->rotation = rotation;
-	}
-
-	void setScale(const glm::vec3 setScale)
-	{
-		this->scale = scale;
-	}
-
-	//Functions
-
-	void move(const glm::vec3 position)
-	{
-		this->position += position;
-	}
-
-	void rotate(const glm::vec3 rotation)
-	{
-		this->rotation += rotation;
-	}
-
-	void scaleUp(const glm::vec3 scale)
-	{
-		this->scale += scale;
-	}
-
-	void update()
-	{
-
-	}
-
-	void render(Shader* shader)
-	{
-		//Update uniforms
-		this->updateModelMatrix();
-		this->updateUniforms(shader);
-
-		shader->use();
-
-		//Bind VAO
-		glBindVertexArray(this->VAO);
-
-		//RENDER
-		if (this->nrOfIndices == 0)
-			glDrawArrays(GL_TRIANGLES, 0, this->nrOfVertices);
-		else
-			glDrawElements(GL_TRIANGLES, this->nrOfIndices, GL_UNSIGNED_INT, 0);
-
-		//Cleanup
-		glBindVertexArray(0);
-		glUseProgram(0);
-		glActiveTexture(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+        glBindVertexArray(0);
+    }
 };
