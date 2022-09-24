@@ -198,6 +198,8 @@ private:
                 texture.path = str.C_Str();
                 textures.push_back(texture);
                 textures_loaded.push_back(texture);
+
+
                 //store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
             }
         }
@@ -209,12 +211,6 @@ private:
 unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma)
 {
     std::string filename = std::string(path);
-    std::cout << "----------------------" << std::endl;
-    printf("%c", *path);
-    std::cout << &path << std::endl;
-    std::cout << *path << std::endl;
-    std::cout << std::string(path) << std::endl;
-    std::cout << "----------------------" << std::endl;
 
     filename = directory + '/' + filename;
 
