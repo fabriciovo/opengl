@@ -135,14 +135,6 @@ int main()
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
 
-        for (int i = 0; i < models.size(); i++) {
-            glm::mat4 weaponModel = glm::mat4(1.0f);
-            weaponModel = glm::translate(weaponModel, glm::vec3(0.0f, 10.0f+  currentFrame * 2, 3.0f)); // translate it down so it's at the center of the scene
-            weaponModel = glm::scale(weaponModel, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-            ourShader.setMat4("model", weaponModel);
-            models[i]->Draw(ourShader);
-        }
-
 
 
 
