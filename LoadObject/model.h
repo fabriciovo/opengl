@@ -10,10 +10,12 @@
 
 using json = nlohmann::json;
 
+unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma = false);
 
 class Model
 {
 public:
+
 	// Loads in a model from a file and stores tha information in 'data', 'JSON', and 'file'
 	Model(const char* file);
 
@@ -68,5 +70,10 @@ private:
 	std::vector<glm::vec2> groupFloatsVec2(std::vector<float> floatVec);
 	std::vector<glm::vec3> groupFloatsVec3(std::vector<float> floatVec);
 	std::vector<glm::vec4> groupFloatsVec4(std::vector<float> floatVec);
+
+
+	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+	std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+	void processNode(aiNode* node, const aiScene* scene);
 };
 #endif

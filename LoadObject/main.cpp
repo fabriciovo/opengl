@@ -39,15 +39,9 @@ int main()
 	// Generates Shader object using shaders default.vert and default.frag
 	Shader shaderProgram("default.vert", "default.frag");
 
-	// Take care of all the light related things
-	//glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	//glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
-	//glm::mat4 lightModel = glm::mat4(1.0f);
-	//lightModel = glm::translate(lightModel, lightPos);
 
 	shaderProgram.Activate();
-	//glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-	//glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
 
 
 	// Enables the Depth Buffer
