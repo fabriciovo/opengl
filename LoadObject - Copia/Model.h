@@ -39,6 +39,7 @@ private:
     void loadModel(std::string const& path);
 
     Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+    void processNode(aiNode* node, const aiScene* scene);
 
     //checks all material textures of a given type and loads the textures if they're not loaded yet.
     //the required info is returned as a Texture struct.

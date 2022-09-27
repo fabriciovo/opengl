@@ -119,6 +119,24 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     return Mesh(vertices, indices, textures);
 }
 
+void Model::processNode(aiNode* node, const aiScene* scene)
+{
+    // process each mesh located at the current node
+    for (unsigned int i = 0; i < node->mNumMeshes; i++)
+    {
+        // the node object only contains indices to index the actual objects in the scene. 
+        // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        meshes.push_back(processMesh(mesh, scene));
+    }
+    // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
+    for (unsigned int i = 0; i < node->mNumChildren; i++)
+    {
+        processNode(node->mChildren[i], scene);
+    }
+
+}
+
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
     std::vector<Texture> textures;
@@ -193,21 +211,4 @@ unsigned int Model::TextureFromFile(const char* path, const std::string& directo
 
     return textureID;
 }
-//Processes a node in a recursive fashion
-void processNode(aiNode * node, const aiScene * scene)
-{
-    //process each mesh located at the current node
-    for (unsigned int i = 0; i < node->mNumMeshes; i++)
-    {
-        //the node object only contains indices to index the actual objects in the scene. 
-        //the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
-        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
-    }
-    //after we've processed all of the meshes (if any) we then recursively process each of the children nodes
-    for (unsigned int i = 0; i < node->mNumChildren; i++)
-    {
-        processNode(node->mChildren[i], scene);
-    }
 
-}

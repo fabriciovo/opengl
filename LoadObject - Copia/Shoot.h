@@ -10,7 +10,7 @@
 class Shoot
 {
 public:
-	Shoot(Model model,Shader shader, glm::vec3 transform);
+	//Shoot(Model model,Shader shader, glm::vec3 transform);
 
 	void Update();
 private:
