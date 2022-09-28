@@ -28,6 +28,7 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
+double xMousePos, yMousePos;
 
 std::vector<Shoot*> models;
 
@@ -138,10 +139,9 @@ int main()
 
 
         for (int i = 0; i < models.size(); i++) {
-            models[i]->Update(deltaTime, ourShader);
+            models[i]->Update(deltaTime, ourShader,camera, 0,0 );
         }
 
-        std::cout << models.size() << std::endl;
 
         //input
 //-----
@@ -165,7 +165,6 @@ void processInput(GLFWwindow* window, Shader ourShader)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -191,6 +190,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 //-------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
+   
+    //getting cursor position
+    glfwGetCursorPos(window, &xMousePos, &yMousePos);
+    cout << "Cursor Position at (" << xMousePos << " : " << yMousePos << endl;
     if (firstMouse)
     {
         lastX = xpos;
@@ -221,6 +224,6 @@ void Shooting(Shader ourShader) {
     float speedX = lastX;
     float speedY = lastY;
 
-    Shoot * shoot = new Shoot(weapon, glm::vec3(20.0f, 1.0f, 3.0f));
+    Shoot * shoot = new Shoot(weapon, camera.Position + camera.Front, camera.Position + camera.Front);
     models.push_back(shoot);
 }
