@@ -2,7 +2,7 @@
 
 
 // Constructor, expects a filepath to a 3D model.
-Model::Model(std::string const& path, bool gamma = false) : gammaCorrection(gamma)
+Model::Model(std::string const& path, bool gamma) : gammaCorrection(gamma)
 {
     loadModel(path);
 }
@@ -158,7 +158,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
         if (!skip)
         {   //if texture hasn't been loaded already, load it
             Texture texture;
-            texture.id = TextureFromFile(str.C_Str(), this->directory);
+            texture.id = TextureFromFile(str.C_Str(), this->directory, false);
             texture.type = typeName;
             texture.path = str.C_Str();
             textures.push_back(texture);
@@ -171,10 +171,9 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
     return textures;
 }
 
-unsigned int Model::TextureFromFile(const char* path, const std::string& directory, bool gamma)
+unsigned int Model::TextureFromFile(const char* path, const string& directory, bool gamma)
 {
-    std::string filename = std::string(path);
-
+    string filename = string(path);
     filename = directory + '/' + filename;
 
     unsigned int textureID;
@@ -211,4 +210,5 @@ unsigned int Model::TextureFromFile(const char* path, const std::string& directo
 
     return textureID;
 }
+
 
