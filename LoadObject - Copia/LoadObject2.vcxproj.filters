@@ -33,6 +33,9 @@
     <ClInclude Include="Camera.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
+    <ClInclude Include="Shoot.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -53,9 +56,17 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
+    <ClCompile Include="Shoot.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="model_loading.fs" />
     <None Include="model_loading.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LoadObject2.rc">
+      <Filter>Arquivos de Recurso</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

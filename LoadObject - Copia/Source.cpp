@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Model.h"
+#include "Shoot.h"
 
 #include <iostream>
 
@@ -15,7 +16,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window, Shader shader);
-void Shoot();
+void Shooting(Shader ourShader);
 
 
 //settings
@@ -28,7 +29,7 @@ float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
-std::vector<Model*> models;
+std::vector<Shoot*> models;
 
 //timing
 float deltaTime = 0.0f;
@@ -101,9 +102,7 @@ int main()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        //input
-        //-----
-        processInput(window, ourShader);
+
 
 
         //render
@@ -129,16 +128,25 @@ int main()
 
 
         //render the loaded model
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(20.0f, 1.0f, 3.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-        ourShader.setMat4("model", model);
-        ourModel.Draw(ourShader);
+        //glm::mat4 model = glm::mat4(1.0f);
+        //model = glm::translate(model, glm::vec3(20.0f, 1.0f, 3.0f)); // translate it down so it's at the center of the scene
+        //model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+        //ourShader.setMat4("model", model);
+        //ourModel.Draw(ourShader);
 
 
 
+
+        for (int i = 0; i < models.size(); i++) {
+            models[i]->Update(deltaTime, ourShader);
+        }
 
         std::cout << models.size() << std::endl;
+
+        //input
+//-----
+        processInput(window, ourShader);
+
         //glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         //-------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -167,7 +175,7 @@ void processInput(GLFWwindow* window, Shader ourShader)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        Shoot();
+        Shooting(ourShader);
 }
 
 //glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -207,11 +215,12 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 
-void Shoot() {
+void Shooting(Shader ourShader) {
 
     Model * weapon = new Model("resources/mesa01/mesa01.obj");
     float speedX = lastX;
     float speedY = lastY;
 
-    models.push_back(weapon);
+    Shoot * shoot = new Shoot(weapon, glm::vec3(20.0f, 1.0f, 3.0f));
+    models.push_back(shoot);
 }
