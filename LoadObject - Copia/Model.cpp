@@ -13,6 +13,12 @@ void Model::Draw(Shader& shader)
         meshes[i].Draw(shader);
 }
 
+Model::~Model()
+{
+    std::cout << "Model" << std::endl;
+
+}
+
 void Model::loadModel(std::string const& path)
 {
     //Read file via ASSIMP

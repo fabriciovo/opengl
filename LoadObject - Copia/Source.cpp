@@ -8,7 +8,8 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Model.h"
-#include "Shoot.h"
+#include "GameObject.h"
+#include "Bullet.h"
 
 #include <iostream>
 
@@ -30,7 +31,7 @@ float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 double xMousePos, yMousePos;
 
-std::vector<Shoot*> models;
+std::vector<GameObject*> gameObjects;
 
 //timing
 float deltaTime = 0.0f;
@@ -137,12 +138,38 @@ int main()
 
 
 
-
-        for (int i = 0; i < models.size(); i++) {
-            models[i]->Update(deltaTime, ourShader,camera, 0,0 );
+        for (int i = 0; i < gameObjects.size(); i++) {
+            if (!gameObjects[i]->destroy) { 
+                gameObjects[i]->Update(deltaTime, ourShader, 0, 0); 
+            }
+            else { 
+                delete gameObjects[i];
+                gameObjects.erase(gameObjects.begin() + i); 
+            }
         }
 
+        //for (vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end();)
+        //{
+        //    if (!(*it)->destroy) {
+        //        (*it)->Update(deltaTime, ourShader, 0, 0);
+        //        ++it;
+        //    }
+        //    else {
+        //        gameObjects.erase(it);
+        //    }
+        //}
 
+        //for (auto it = begin(gameObjects); it != end(gameObjects); ++it) {
+        //    if(!(*it)->destroy){
+        //        (*it)->Update(deltaTime, ourShader, 0, 0);
+        //    }
+        //    else {
+        //        //delete (*it);
+        //        gameObjects.erase(it);
+        //    }
+        //}
+
+        std::cout << gameObjects.size() << std::endl;
         //input
 //-----
         processInput(window, ourShader);
@@ -173,8 +200,11 @@ void processInput(GLFWwindow* window, Shader ourShader)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         Shooting(ourShader);
+    }
+
+        
 }
 
 //glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -193,7 +223,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
    
     //getting cursor position
     glfwGetCursorPos(window, &xMousePos, &yMousePos);
-    cout << "Cursor Position at (" << xMousePos << " : " << yMousePos << endl;
     if (firstMouse)
     {
         lastX = xpos;
@@ -224,6 +253,6 @@ void Shooting(Shader ourShader) {
     float speedX = lastX;
     float speedY = lastY;
 
-    Shoot * shoot = new Shoot(weapon, camera.Position + camera.Front, camera.Position + camera.Front);
-    models.push_back(shoot);
+    GameObject* shoot = new Bullet(weapon, camera.Position + camera.Front);
+    gameObjects.push_back(shoot);
 }
