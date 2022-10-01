@@ -15,7 +15,7 @@ public:
 	void Update(float deltaTime, Shader shader);
 	~Bullet();
 private:
-	float timer = 3.0f;
+	float timer = 10.0f;
 	glm::vec3 dir;
 };
 

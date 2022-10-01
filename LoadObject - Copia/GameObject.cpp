@@ -17,6 +17,8 @@ void GameObject::Update(float deltaTime, Shader shader)
 {
     shader.setMat4("model", this->GetTransformMatrix());
     this->model3D->Draw(shader);
+
+
 }
 
 glm::mat4 GameObject::GetTransformMatrix()
@@ -31,18 +33,23 @@ glm::mat4 GameObject::GetTransformMatrix()
 
 bool GameObject::Collision(GameObject* other)
 {
+	std::cout << this->scale.x << std::endl;
+	std::cout << this->scale.y << std::endl;
+	std::cout << this->scale.z << std::endl;
+	int temp = 4;
 	if(this->id != other->id){
 		if (
-			position.x < other->position.x + other->scale.x &&
-			position.x + scale.x > other->position.x &&
+			this->position.x < other->position.x + other->scale.x * temp &&
+			this->position.x + this->scale.x * temp > other->position.x &&
 
-			position.y < other->position.y + other->scale.y &&
-			position.y + scale.y > other->position.y &&
+			this->position.y < other->position.y + other->scale.y * temp &&
+			this->position.y + this->scale.y * temp > other->position.y &&
 		
-			position.z < other->position.z + other->scale.z &&
-			position.z + scale.z > other->position.z
+			this->position.z < other->position.z + other->scale.z * temp &&
+			this->position.z + this->scale.z * temp > other->position.z
 			)
 		{
+
 			return true;
 		}
 	}
