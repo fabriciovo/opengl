@@ -1,12 +1,9 @@
 #include "Bullet.h"
 
 
-Bullet::Bullet(std::string model, glm::vec3 position, glm::vec3 scale, glm::vec3 dir) {
-    this->position = position;
+Bullet::Bullet(std::string model, glm::vec3 position, glm::vec3 scale, glm::vec3 dir) : GameObject(model, position, scale) {
     this->dir = dir;
-    this->model3D = new Model(model);
-    this->model = glm::translate(this->model, this->position); // translate it down so it's at the center of the scene
-    this->model = glm::scale(this->model, scale);	// it's a bit too big for our scene, so scale it down
+ 
 }
 
 

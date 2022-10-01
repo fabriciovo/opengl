@@ -85,14 +85,19 @@ int main()
 
     //load Game Objects
     //-----------
-    GameObject* obj1 = new GameObject("resources/mesa01/mesa01.obj", glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    GameObject* obj2 = new GameObject("resources/mesa01/mesa01.obj", glm::vec3(20.0f, 10.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    GameObject* obj1 = new GameObject("resources/mesa01/mesa01.obj", glm::vec3(5.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    //GameObject* obj2 = new GameObject("resources/pyramid/pyramid.obj", glm::vec3(10.0f, 14.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    //GameObject* obj3 = new GameObject("resources/terrain/terrain.obj", glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    //GameObject* obj4 = new GameObject("resources/dragon/dragon.obj", glm::vec3(30.0f, 5.0f, 3.0f), glm::vec3(10.0f, 10.0f, 10.0f));
 
     Player * player = new Player("resources/mesa01/mesa01.obj", glm::vec3(20.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f),camera, window);
 
     gameObjects.push_back(player);
     gameObjects.push_back(obj1);
-    gameObjects.push_back(obj2);
+    //gameObjects.push_back(obj2);
+    //gameObjects.push_back(obj3);
+    //gameObjects.push_back(obj4);
+
 
     //draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -140,6 +145,9 @@ int main()
         for (int i = 0; i < gameObjects.size(); i++) {
             if (!gameObjects[i]->destroy) { 
                 gameObjects[i]->Update(deltaTime, ourShader); 
+                if (gameObjects[i]->Collision(obj1) ) {
+                    gameObjects[i]->destroy = true;
+                }
             }
             else { 
                 delete gameObjects[i];
