@@ -11,9 +11,9 @@ class GameObject
 {
 public:
 	GameObject();
-	GameObject(Model* model3D, glm::vec3 transform);
+	GameObject(std::string model, glm::vec3 position, glm::vec3 scale);
 	virtual void Update(float deltaTime, Shader shader, float, float);
-	glm::vec3 transform;
+	glm::vec3 position;
 	bool destroy = false;
 	~GameObject();
 protected:
@@ -23,8 +23,6 @@ protected:
 
 
 	float timeToDestroy = 3.0f;
-
-	void Draw(Shader shader);
 
 };
 

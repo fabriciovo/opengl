@@ -86,11 +86,13 @@ int main()
     //-------------------------
     Shader ourShader("model_loading.vs", "model_loading.fs");
 
-    //load models
+    //load Game Objects
     //-----------
-    Model ourModel("resources/mesa01/mesa01.obj");
+    GameObject* obj1 = new GameObject("resources/mesa01/mesa01.obj", glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    GameObject* obj2 = new GameObject("resources/mesa01/mesa01.obj", glm::vec3(20.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    gameObjects.push_back(obj1);
+    gameObjects.push_back(obj2);
 
-    Model ourModel2("resources/mesa01/mesa01.obj");
     //draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -121,22 +123,6 @@ int main()
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
 
-        //render the loaded model
-        glm::mat4 model2 = glm::mat4(1.0f);
-        model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 3.0f)); // translate it down so it's at the center of the scene
-        model2 = glm::scale(model2, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-        ourShader.setMat4("model", model2);
-        ourModel2.Draw(ourShader);
-
-
-        //render the loaded model
-        //glm::mat4 model = glm::mat4(1.0f);
-        //model = glm::translate(model, glm::vec3(20.0f, 1.0f, 3.0f)); // translate it down so it's at the center of the scene
-        //model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-        //ourShader.setMat4("model", model);
-        //ourModel.Draw(ourShader);
-
-
 
         for (int i = 0; i < gameObjects.size(); i++) {
             if (!gameObjects[i]->destroy) { 
@@ -147,27 +133,6 @@ int main()
                 gameObjects.erase(gameObjects.begin() + i); 
             }
         }
-
-        //for (vector<GameObject*>::iterator it = gameObjects.begin(); it != gameObjects.end();)
-        //{
-        //    if (!(*it)->destroy) {
-        //        (*it)->Update(deltaTime, ourShader, 0, 0);
-        //        ++it;
-        //    }
-        //    else {
-        //        gameObjects.erase(it);
-        //    }
-        //}
-
-        //for (auto it = begin(gameObjects); it != end(gameObjects); ++it) {
-        //    if(!(*it)->destroy){
-        //        (*it)->Update(deltaTime, ourShader, 0, 0);
-        //    }
-        //    else {
-        //        //delete (*it);
-        //        gameObjects.erase(it);
-        //    }
-        //}
 
         std::cout << gameObjects.size() << std::endl;
         //input
@@ -249,10 +214,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 void Shooting(Shader ourShader) {
 
-    Model * weapon = new Model("resources/mesa01/mesa01.obj");
-    float speedX = lastX;
-    float speedY = lastY;
-
-    GameObject* shoot = new Bullet(weapon, camera.Position + camera.Front);
+    GameObject* shoot = new Bullet("resources/mesa01/mesa01.obj", camera.Position + camera.Front, glm::vec3(1.0f, 1.0f, 1.0f));
     gameObjects.push_back(shoot);
 }

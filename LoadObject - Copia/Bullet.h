@@ -11,11 +11,11 @@
 class Bullet : public GameObject
 {
 public:
-	Bullet(Model* model3D, glm::vec3 transform);
+	Bullet(std::string model, glm::vec3 transform, glm::vec3 scale);
 	void Update(float deltaTime, Shader shader,  float, float);
 	~Bullet();
 private:
-	float timer = 10.0f;
+	float timer = 3.0f;
 };
 
 #endif
