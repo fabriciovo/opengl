@@ -14,9 +14,7 @@
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow* window, Shader shader);
+
 void Shooting(Shader ourShader);
 
 
@@ -25,7 +23,9 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 //camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+//Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
+
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -61,8 +61,6 @@ int main()
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);
 
     //tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -106,7 +104,21 @@ int main()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+        // Handles camera inputs
+        camera.Inputs(window);
+        // Updates and exports the camera matrix to the Vertex Shader
+        camera.Matrix(90.0f, 0.1f, 100.0f, ourShader, "camMatrix");
 
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+            if (firstMouse)
+            {
+                Shooting(ourShader);
+                firstMouse = false;
+            }
+        }
+        else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+            firstMouse = true;
+        }
 
 
         //render
@@ -117,13 +129,7 @@ int main()
         //don't forget to enable shader before setting uniforms
         ourShader.use();
 
-        //view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = camera.GetViewMatrix();
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
-
-
+        
         for (int i = 0; i < gameObjects.size(); i++) {
             if (!gameObjects[i]->destroy) { 
                 gameObjects[i]->Update(deltaTime, ourShader, 0, 0); 
@@ -133,11 +139,6 @@ int main()
                 gameObjects.erase(gameObjects.begin() + i); 
             }
         }
-
-        std::cout << gameObjects.size() << std::endl;
-        //input
-//-----
-        processInput(window, ourShader);
 
         //glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         //-------------------------------------------------------------------------------
@@ -153,24 +154,7 @@ int main()
 
 //process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 //---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window, Shader ourShader)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        Shooting(ourShader);
-    }
 
-        
-}
 
 //glfw: whenever the window size changed (by OS or user resize) this callback function executes
 //---------------------------------------------------------------------------------------------
@@ -181,39 +165,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-//glfw: whenever the mouse moves, this callback is called
-//-------------------------------------------------------
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-   
-    //getting cursor position
-    glfwGetCursorPos(window, &xMousePos, &yMousePos);
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; //reversed since y-coordinates go from bottom to top
-
-    lastX = xpos;
-    lastY = ypos;
-
-    camera.ProcessMouseMovement(xoffset, yoffset);
-}
-
-//glfw: whenever the mouse scroll wheel scrolls, this callback is called
-//----------------------------------------------------------------------
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    camera.ProcessMouseScroll(yoffset);
-}
-
 
 void Shooting(Shader ourShader) {
 
-    GameObject* shoot = new Bullet("resources/mesa01/mesa01.obj", camera.Position + camera.Front, glm::vec3(1.0f, 1.0f, 1.0f));
+    GameObject* shoot = new Bullet("resources/mesa01/mesa01.obj", camera.Position, glm::vec3(1.0f, 1.0f, 1.0f), camera.Orientation);
     gameObjects.push_back(shoot);
 }
