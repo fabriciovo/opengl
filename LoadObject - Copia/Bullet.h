@@ -16,6 +16,7 @@ public:
 	~Bullet();
 private:
 	float timer = 10.0f;
+	float size = 1;
 	glm::vec3 dir;
 };
 
