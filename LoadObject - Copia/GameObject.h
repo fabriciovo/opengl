@@ -13,16 +13,16 @@ public:
 	GameObject();
 	GameObject(std::string model, glm::vec3 position, glm::vec3 scale);
 	virtual void Update(float deltaTime, Shader shader);
+	glm::mat4 GetTransformMatrix();
 	bool Collision(GameObject* other);
 	bool destroy = false;
 	~GameObject();
 protected:
 	uint32_t id;
 	Model* model3D;
-	glm::mat4 model = glm::mat4(1.0f);
-	glm::vec3 scale;
 	glm::vec3 position;
-
+	glm::vec3 scale;
+	float rotaion_angle;
 	float timeToDestroy = 3.0f;
 
 };

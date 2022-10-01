@@ -10,10 +10,10 @@ Player::Player(std::string model, glm::vec3 position, glm::vec3 scale, Camera * 
 
 void Player::Update(float deltaTime, Shader shader) {
 	GameObject::Update(deltaTime, shader);
+    this->position = this->camera->Position;
 
-    this->model = glm::translate(this->model, camera->Position );
 
-
+    //this->model = glm::translate(this->model, this->camera->Position );
 }
 
 Player::~Player()
