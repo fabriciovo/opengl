@@ -23,6 +23,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="stb_image.h" />
@@ -33,6 +34,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="main.cpp" />

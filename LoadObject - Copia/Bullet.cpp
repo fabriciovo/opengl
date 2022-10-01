@@ -10,8 +10,8 @@ Bullet::Bullet(std::string model, glm::vec3 position, glm::vec3 scale, glm::vec3
 }
 
 
-void Bullet::Update(float deltaTime, Shader shader, float mouseX, float mouseY)  {
-    GameObject::Update(deltaTime, shader, mouseX, mouseY);
+void Bullet::Update(float deltaTime, Shader shader)  {
+    GameObject::Update(deltaTime, shader);
     float velocity = 10 * deltaTime;
     this->timer -= deltaTime;
     this->model = glm::translate(this->model, this->dir * velocity);

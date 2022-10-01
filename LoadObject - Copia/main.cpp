@@ -10,6 +10,7 @@
 #include "Model.h"
 #include "GameObject.h"
 #include "Bullet.h"
+#include "Player.h"
 
 #include <iostream>
 
@@ -24,13 +25,11 @@ const unsigned int SCR_HEIGHT = 600;
 
 //camera
 //Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-Camera camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
+Camera * camera = new Camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
 
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
-bool firstMouse = true;
-double xMousePos, yMousePos;
-
+bool isFirstMouse = false;
 std::vector<GameObject*> gameObjects;
 
 //timing
@@ -87,7 +86,11 @@ int main()
     //load Game Objects
     //-----------
     GameObject* obj1 = new GameObject("resources/mesa01/mesa01.obj", glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    GameObject* obj2 = new GameObject("resources/mesa01/mesa01.obj", glm::vec3(20.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    GameObject* obj2 = new GameObject("resources/mesa01/mesa01.obj", glm::vec3(20.0f, 10.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+    Player * player = new Player("resources/mesa01/mesa01.obj", glm::vec3(20.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f),camera, window);
+
+    gameObjects.push_back(player);
     gameObjects.push_back(obj1);
     gameObjects.push_back(obj2);
 
@@ -104,21 +107,25 @@ int main()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        // Handles camera inputs
-        camera.Inputs(window);
+        //Camera
+            // Handles camera inputs
+        camera->Inputs(window);
         // Updates and exports the camera matrix to the Vertex Shader
-        camera.Matrix(90.0f, 0.1f, 100.0f, ourShader, "camMatrix");
+        camera->Matrix(90.0f, 0.1f, 100.0f, ourShader, "camMatrix");
 
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-            if (firstMouse)
+            if (isFirstMouse)
             {
                 Shooting(ourShader);
-                firstMouse = false;
+                isFirstMouse = false;
             }
         }
         else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
-            firstMouse = true;
+            isFirstMouse = true;
         }
+
+
+
 
 
         //render
@@ -132,7 +139,7 @@ int main()
         
         for (int i = 0; i < gameObjects.size(); i++) {
             if (!gameObjects[i]->destroy) { 
-                gameObjects[i]->Update(deltaTime, ourShader, 0, 0); 
+                gameObjects[i]->Update(deltaTime, ourShader); 
             }
             else { 
                 delete gameObjects[i];
@@ -168,6 +175,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void Shooting(Shader ourShader) {
 
-    GameObject* shoot = new Bullet("resources/mesa01/mesa01.obj", camera.Position, glm::vec3(1.0f, 1.0f, 1.0f), camera.Orientation);
+    GameObject* shoot = new Bullet("resources/mesa01/mesa01.obj", camera->Position, glm::vec3(1.0f, 1.0f, 1.0f), camera->Orientation);
     gameObjects.push_back(shoot);
 }

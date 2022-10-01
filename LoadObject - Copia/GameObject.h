@@ -12,7 +12,7 @@ class GameObject
 public:
 	GameObject();
 	GameObject(std::string model, glm::vec3 position, glm::vec3 scale);
-	virtual void Update(float deltaTime, Shader shader, float, float);
+	virtual void Update(float deltaTime, Shader shader);
 	glm::vec3 position;
 	bool destroy = false;
 	~GameObject();

@@ -14,7 +14,7 @@ GameObject::GameObject(std::string model, glm::vec3 position, glm::vec3 scale)
     this->model = glm::scale(this->model, scale);	// it's a bit too big for our scene, so scale it down
 }
 
-void GameObject::Update(float deltaTime, Shader shader, float mouseX, float mouseY)
+void GameObject::Update(float deltaTime, Shader shader)
 {
     shader.setMat4("model", this->model);
     this->model3D->Draw(shader);
