@@ -1,7 +1,7 @@
 #include "Bullet.h"
 
 
-Bullet::Bullet(std::string model, glm::vec3 position, glm::vec3 scale, glm::vec3 dir) : GameObject(model, position, scale) {
+Bullet::Bullet(std::string model, glm::vec3 position, glm::vec3 scale, glm::vec3 dir, float size) : GameObject(model, position, scale, size) {
     this->dir = dir;
  
 }

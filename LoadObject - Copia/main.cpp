@@ -85,12 +85,12 @@ int main()
 
     //load Game Objects
     //-----------
-    GameObject* obj2 = new GameObject("resources/pyramid/pyramid.obj", glm::vec3(10.0f, 14.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    GameObject* obj3 = new GameObject("resources/terrain/terrain.obj", glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    GameObject* obj4 = new GameObject("resources/dragon/dragon.obj", glm::vec3(30.0f, 5.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    GameObject* obj1 = new GameObject("resources/mesa01/mesa01.obj", glm::vec3(5.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    GameObject* obj2 = new GameObject("resources/pyramid/pyramid.obj", glm::vec3(10.0f, 14.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), 3.0f);
+    GameObject* obj3 = new GameObject("resources/terrain/terrain.obj", glm::vec3(-10.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), 5.0f);
+    GameObject* obj4 = new GameObject("resources/dragon/dragon.obj", glm::vec3(40.0f, 10.0f, 3.0f), glm::vec3(3.0f, 3.0f, 3.0f), 2.0f);
+    GameObject* obj1 = new GameObject("resources/mesa01/mesa01.obj", glm::vec3(5.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f),8.0f);
 
-    Player * player = new Player("resources/mesa01/mesa01.obj", glm::vec3(20.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f),camera, window);
+    Player * player = new Player("resources/cube/cube.obj", glm::vec3(20.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f),camera, window);
 
     gameObjects.push_back(player);
     gameObjects.push_back(obj2);
@@ -183,6 +183,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void Shooting(Shader ourShader) {
 
-    GameObject* shoot = new Bullet("resources/cube/cube.obj", camera->Position, glm::vec3(1.0f, 1.0f, 1.0f), camera->Orientation);
-    gameObjects.push_back(shoot);
+    Bullet* bullet = new Bullet("resources/cube/cube.obj", camera->Position, glm::vec3(1.0f, 1.0f, 1.0f), camera->Orientation, 2.0f);
+    gameObjects.push_back(bullet);
 }

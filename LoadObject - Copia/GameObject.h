@@ -11,11 +11,13 @@ class GameObject
 {
 public:
 	GameObject();
-	GameObject(std::string model, glm::vec3 position, glm::vec3 scale);
+	GameObject(std::string model, glm::vec3 position, glm::vec3 scale, float size = 1.0f);
 	virtual void Update(float deltaTime, Shader shader);
 	glm::mat4 GetTransformMatrix();
 	bool Collision(std::vector<GameObject*> other);
 	bool destroy = false;
+	float size = 1.0f;
+
 	~GameObject();
 protected:
 	uint32_t id;
@@ -25,7 +27,6 @@ protected:
 	float rotaion_angle;
 	float timeToDestroy = 3.0f;
 
-	float size = 3.0f;
 
 };
 

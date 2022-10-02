@@ -11,7 +11,7 @@
 class Bullet : public GameObject
 {
 public:
-	Bullet(std::string model, glm::vec3 transform, glm::vec3 scale, glm::vec3 dir);
+	Bullet(std::string model, glm::vec3 transform, glm::vec3 scale, glm::vec3 dir, float size);
 	void Update(float deltaTime, Shader shader);
 	~Bullet();
 private:
