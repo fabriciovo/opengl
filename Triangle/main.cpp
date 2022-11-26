@@ -2,14 +2,17 @@
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include <vector>
+#include <glm/glm.hpp>
 #include <glm/fwd.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <GLM/gtc/type_ptr.hpp>
+#include "shaderClass.h"
+
 
 using namespace std;
 
-#define PI  3.14159265359
-#define HALF_PI PI/2.0
+vector<glm::vec3*>* CreateBSpline(vector<glm::vec3*>* points);
 
 
 vector<float> points;
@@ -17,18 +20,13 @@ vector<float> bSplineCurve;
 vector<glm::vec3*>* controlPointsVec = new vector<glm::vec3*>();
 vector<glm::vec3*>* selectedPoints = new vector<glm::vec3*>();
 
-// settings
 const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_HEIGHT = 800;
 
 
-glm::mat4 projection = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f);
-
-GLuint vaoC, vboC, vboColors;
-GLuint vaoI, vboI;
-GLuint vaoE, vboE;
-GLuint vaoB, vboB;
-
+GLuint vaoPoints, vboPoints;
+GLuint vaoPointLines, vboPointLines;
+GLuint vaoSpline, vboSpline;
 
 
 
@@ -90,28 +88,29 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		double xpos, ypos;
 		//getting cursor position
 		glfwGetCursorPos(window, &xpos, &ypos);
-		cout << "Cursor Position at (" << xpos << " : " << ypos << endl;
-		points.push_back(xpos);
-		points.push_back(ypos);
+		cout << "Cursor Position at (" << xpos  << " : " << ypos << endl;
+		points.push_back((2.0f * xpos / 800 - 1.0f));
+		points.push_back((-2.0f * ypos / 800 + 1.0f));
 		points.push_back(0.0f);
 
 		selectedPoints->push_back(new glm::vec3(xpos,ypos,0.0f));
 
-		glBindVertexArray(vaoC);
-		glBindBuffer(GL_ARRAY_BUFFER, vboC);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * points.size(), points.data(), GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-		glEnableVertexAttribArray(0);
+		glBindVertexArray(vaoPoints);
+		glBindBuffer(GL_ARRAY_BUFFER, vboPoints);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * points.size(), points.data(), GL_DYNAMIC_DRAW);
 
 		
 		if (points.size() > 9) {
 
 			controlPointsVec = CreateBSpline(selectedPoints);
-			glBindVertexArray(vaoB);
-			glBindBuffer(GL_ARRAY_BUFFER, vboB);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * bSplineCurve.size(), bSplineCurve.data(), GL_STATIC_DRAW);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+			//glBindVertexArray(vaoSpline);
+			//glBindBuffer(GL_ARRAY_BUFFER, vboSpline);
+			//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * bSplineCurve.size(), bSplineCurve.data(), GL_STATIC_DRAW);
+			//glEnableVertexAttribArray(0);
+			//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+			glBindVertexArray(vaoSpline);
+			glBindBuffer(GL_ARRAY_BUFFER, vboSpline);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * bSplineCurve.size(), bSplineCurve.data(), GL_DYNAMIC_DRAW);
 
 		}
 
@@ -120,81 +119,79 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 }
 
 
-void draw() {
-
-	glBindVertexArray(vaoC);
-	glBindBuffer(GL_ARRAY_BUFFER, vboC);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * points.size(), points.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(0);
-	glDrawArrays(GL_POINTS, 0, points.size() / 3);
-
-	glBindVertexArray(vaoB);
-	glBindBuffer(GL_ARRAY_BUFFER, vboB);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * bSplineCurve.size(), bSplineCurve.data(), GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glBindVertexArray(vaoB);
-	glDrawArrays(GL_LINE_STRIP, 0, bSplineCurve.size() / 3);
-}
 
 int main()
 {
 	// Initialize GLFW
 	glfwInit();
 
-	// Tell GLFW what version of OpenGL we are using 
-	// In this case we are using OpenGL 3.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	// Tell GLFW we are using the CORE profile
-	// So that means we only have the modern functions
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// Create a GLFWwindow object of 800 by 800 pixels, naming it "YoutubeOpenGL"
-	GLFWwindow* window = glfwCreateWindow(800, 800, "window", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "window", NULL, NULL);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
-	// Error check if the window fails to create
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
-	// Introduce the window into the current context
 	glfwMakeContextCurrent(window);
-
-
-
-	//Load GLAD so it configures OpenGL
+	
 	gladLoadGL();
-	// Specify the viewport of OpenGL in the Window
-	// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
-	glViewport(0, 0, 800, 800);
+	Shader shaderProgram("default.vert", "default.frag");
+	//glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+	//glm::mat4 projection = glm::ortho(0, 800, 800, 0, -1, 1);
 
 
-
-	// Specify the color of the background
 	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-	// Clean the back buffer and assign the new color to it
 	glClear(GL_COLOR_BUFFER_BIT);
-	// Swap the back buffer with the front buffer
-	glfwSwapBuffers(window);
+
+	glGenBuffers(1, &vboPoints);
+	glGenVertexArrays(1, &vaoPoints);
+	glBindVertexArray(vaoPoints);
+	glBindBuffer(GL_ARRAY_BUFFER, vboPoints);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(0);
 
 
+
+	glGenBuffers(1, &vboSpline);
+	glGenVertexArrays(1, &vaoSpline);
+	glBindVertexArray(vaoSpline);
+	glBindBuffer(GL_ARRAY_BUFFER, vboSpline);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(0);
+
+
+	glPointSize(15);
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
+		shaderProgram.Activate();
+		//glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-		glEnable(GL_POINTS);
-		glPointSize(15);
-		// shader.setMat4("projection", projection);
-		/*glDrawArrays(GL_POINTS, 0, finalPointsFloat.size());
-		glDrawArrays(GL_LINE_STRIP, 0, finalPointsFloat.size() / 3);*/
-		draw();
-		glDisable(GL_POINTS);
+		glBindVertexArray(vaoPoints);
+		glDrawArrays(GL_POINTS, 0, points.size() / 3);
+		//glDrawArrays(GL_LINE_STRIP, 0, points.size() / 3);
+
+		glBindVertexArray(vaoSpline);
+		glDrawArrays(GL_LINE_STRIP, 0, bSplineCurve.size() / 3);
+
+
+
+		//glDrawArrays(GL_LINE_STRIP, 0, bSplineCurve.size() / 3);
+		//glBindVertexArray(vaoSpline);
+		////glBindBuffer(GL_ARRAY_BUFFER, vboSpline);
+		////glBufferData(GL_ARRAY_BUFFER, sizeof(float) * bSplineCurve.size(), bSplineCurve.data(), GL_STATIC_DRAW);
+		////glEnableVertexAttribArray(0);
+		////glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		//glBindVertexArray(vaoSpline);
+		//glDrawArrays(GL_LINE_STRIP, 0, bSplineCurve.size() / 3);
+
 		glfwSwapBuffers(window);
 		
 		// Take care of all GLFW events
