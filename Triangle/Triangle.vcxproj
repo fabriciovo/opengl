@@ -163,6 +163,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />
+    <ClInclude Include="writter.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="pop_cat.png" />
