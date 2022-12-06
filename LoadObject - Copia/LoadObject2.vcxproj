@@ -53,7 +53,7 @@
     <ProjectGuid>{2A4BFDF3-B667-4126-8A88-E4187C57EB5F}</ProjectGuid>
     <RootNamespace>LoadObject2</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>LoadObject2</ProjectName>
+    <ProjectName>GA</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
