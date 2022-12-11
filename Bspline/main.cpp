@@ -8,7 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GLM/gtc/type_ptr.hpp>
 #include "shaderClass.h"
-#include "objWriter.hpp"
+#include "objWriterNew.hpp"
 
 #define PI  3.14159265359
 
@@ -20,7 +20,8 @@ void CreateInternal(vector<glm::vec3*>* points);
 void keyboard_button_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 vector<glm::vec3*>* bSplineCurveVec = new vector<glm::vec3*>();
-
+vector<glm::vec3*>* vecExternal = new vector<glm::vec3*>();
+vector<glm::vec3*>* vecInternal = new vector<glm::vec3*>();
 
 vector<float> points;
 vector<float> cinternal;
@@ -83,13 +84,12 @@ void CreateBSpline(vector<glm::vec3*>* points) {
 		}
 	}
 
-	//SplineWriter * w = new SplineWriter(bSplineCurve);
-	//w->WriteSpline();
+	
 }
 
 void CreateExternal(vector<glm::vec3*>* points) {
 	cexternal.clear();
-	vector<glm::vec3*>* temp = new vector<glm::vec3*>();
+	vecExternal->clear();
 	for (int j = 0; j < points->size() - 1; j += 2) {
 
 		glm::vec3* a = points->at(j);
@@ -115,21 +115,21 @@ void CreateExternal(vector<glm::vec3*>* points) {
 		GLfloat cy = (glm::sin(angle) * 0.1);
 
 		glm::vec3* pointGenerated = new glm::vec3(a->x + cx, a->y + cy, 0.0);
-		temp->push_back(pointGenerated);
+		vecExternal->push_back(pointGenerated);
 
 	}
 
-	temp->push_back(temp->at(0));
-	temp->push_back(temp->at(1));
-	temp->push_back(temp->at(2));
+	vecExternal->push_back(vecExternal->at(0));
+	vecExternal->push_back(vecExternal->at(1));
+	vecExternal->push_back(vecExternal->at(2));
 
 
-	for (int i = 0; i < temp->size() - 1; i++)
+	for (int i = 0; i < vecExternal->size() - 1; i++)
 	{
 
-		cexternal.push_back(temp->at(i)->x);
-		cexternal.push_back(temp->at(i)->y);
-		cexternal.push_back(temp->at(i)->z);
+		cexternal.push_back(vecExternal->at(i)->x);
+		cexternal.push_back(vecExternal->at(i)->y);
+		cexternal.push_back(vecExternal->at(i)->z);
 
 	}
 
@@ -137,7 +137,7 @@ void CreateExternal(vector<glm::vec3*>* points) {
 
 void CreateInternal(vector<glm::vec3*>* points) {
 	cinternal.clear();
-	vector<glm::vec3*>* temp = new vector<glm::vec3*>();
+	vecInternal->clear();
 
 
 	for (int j = 0; j < points->size() - 1; j += 2) {
@@ -171,20 +171,20 @@ void CreateInternal(vector<glm::vec3*>* points) {
 		GLfloat cy = (glm::sin(angle) * 0.1);
 
 		glm::vec3* pointGenerated = new glm::vec3(a->x + cx, a->y + cy, 0);
-		temp->push_back(pointGenerated);
+		vecInternal->push_back(pointGenerated);
 
 	}
 
-	temp->push_back(temp->at(0));
-	temp->push_back(temp->at(1));
-	temp->push_back(temp->at(2));
+	vecInternal->push_back(vecInternal->at(0));
+	vecInternal->push_back(vecInternal->at(1));
+	vecInternal->push_back(vecInternal->at(2));
 
 
-	for (int i = 0; i < temp->size() - 1; i++)
+	for (int i = 0; i < vecInternal->size() - 1; i++)
 	{
-		cinternal.push_back(temp->at(i)->x);
-		cinternal.push_back(temp->at(i)->y);
-		cinternal.push_back(temp->at(i)->z);
+		cinternal.push_back(vecInternal->at(i)->x);
+		cinternal.push_back(vecInternal->at(i)->y);
+		cinternal.push_back(vecInternal->at(i)->z);
 	}
 
 }
@@ -195,6 +195,23 @@ void keyboard_button_callback(GLFWwindow* window, int key, int scancode, int act
 		showExtarnalsCurves = !showExtarnalsCurves;
 	}
 	if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+		OBJWriter obj;
+		obj.createMtlFile();
+		obj.createOBJFile();
+		
+		obj.addPointsCurve(vecExternal);
+
+		obj.addPointsCurve(vecInternal);
+		
+		obj.saveTextureValuesToOBJ();
+
+		obj.addNormalExternalCurve(vecInternal->size());
+
+
+
+		obj.addFaces(vecInternal->size());
+	
+
 
 	}
 }
@@ -203,7 +220,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-		OBJWriter obj;
+		
 		double xpos, ypos;
 		double realXpos, realYpos;
 		//getting cursor position
@@ -224,6 +241,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		
 		if (points.size() > 9) {
 			
+			bSplineCurveVec->clear();
+
 			//Bspline
 			CreateBSpline(selectedPoints);
 			glBindVertexArray(vaoSpline);
@@ -242,20 +261,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 			glBindBuffer(GL_ARRAY_BUFFER, vboInternal);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * cinternal.size(), cinternal.data(), GL_DYNAMIC_DRAW);
 
-			tamanhoCurvaExterna = cexternal.size();
-			tamanhoCurvaInterna = cinternal.size();
-			for (int i = 0; i < cinternal.size(); i++) {
-				obj.addFaces(indexFile, tamanhoCurvaInterna, ++faces, 1);
-				
-				
-			
-				//obj.addNormalExternalCurve(normal_vec_abac, normal_vec_dbdc);
-				
-				
-				indexFile++;
 
-			}
-			obj.saveTextureValuesToOBJ();
 		}
 	}
 }
@@ -290,9 +296,7 @@ int main()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//ObjWritter
-	OBJWriter writer;
-	writer.createMtlFile();
-	writer.createOBJFile();
+
 
 	//Points
 	glGenBuffers(1, &vboPoints);

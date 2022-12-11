@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="EBO.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
@@ -27,9 +28,12 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="VAO.h" />
+    <ClInclude Include="VBO.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="EBO.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Mesh.cpp" />
@@ -39,8 +43,12 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="VAO.cpp" />
+    <ClCompile Include="VBO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="basic_lighting.fs" />
+    <None Include="basic_lighting.vs" />
     <None Include="model_loading.fs" />
     <None Include="model_loading.vs" />
   </ItemGroup>

@@ -1,12 +1,36 @@
 #version 330 core
 
+// Outputs colors in RGBA
 out vec4 FragColor;
 
-in vec2  TexCoords;
 
-uniform sampler2D texture_diffuse0;
+in vec3 color;
+in vec2 texCoord;
+in vec3 Normal;
+in vec3 crntPos;
 
-void main ()
+uniform sampler2D tex0;
+uniform vec4 lightColor;
+uniform vec3 lightPos;
+uniform vec3 camPos;
+
+void main()
 {
-	FragColor = texture(texture_diffuse0,TexCoords);
+	// ambient
+	float ambient = 0.20f;
+
+	// diffuse
+	vec3 normal = normalize(Normal);
+	vec3 lightDirection = normalize(lightPos - crntPos);
+	float diffuse = max(dot(normal, lightDirection), 0.0f);
+
+	// specular
+	float specularLight = 0.50f;
+	vec3 viewDirection = normalize(camPos - crntPos);
+	vec3 reflectionDirection = reflect(-lightDirection, normal);
+	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 8);
+	float specular = specAmount * specularLight;
+
+	// outputs final 
+	FragColor = texture(tex0, texCoord) * lightColor * (diffuse + ambient + specular);
 }

@@ -150,7 +150,6 @@
   <ItemGroup>
     <ClCompile Include="..\glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="objWriter.hpp" />
     <ClCompile Include="shaderClass.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +157,7 @@
     <None Include="default.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="objWriterNew.hpp" />
     <ClInclude Include="shaderClass.h" />
     <ClInclude Include="splineWriter.hpp" />
   </ItemGroup>

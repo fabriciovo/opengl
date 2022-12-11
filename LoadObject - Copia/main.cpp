@@ -13,18 +13,16 @@
 #include "Player.h"
 
 #include <iostream>
+#include "VAO.h"
+#include "EBO.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 void Shooting(Shader ourShader);
 
-
-//settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-//camera
-//Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 Camera * camera = new Camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
 
 float lastX = SCR_WIDTH / 2.0f;
@@ -32,9 +30,39 @@ float lastY = SCR_HEIGHT / 2.0f;
 bool isFirstMouse = false;
 std::vector<GameObject*> gameObjects;
 
-//timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+
+GLfloat lightVertices[] =
+{ //     COORDINATES     //
+    -0.1f, -0.1f,  0.1f,
+    -0.1f, -0.1f, -0.1f,
+     0.1f, -0.1f, -0.1f,
+     0.1f, -0.1f,  0.1f,
+    -0.1f,  0.1f,  0.1f,
+    -0.1f,  0.1f, -0.1f,
+     0.1f,  0.1f, -0.1f,
+     0.1f,  0.1f,  0.1f
+};
+
+GLuint lightIndices[] =
+{
+    0, 1, 2,
+    0, 2, 3,
+    0, 4, 7,
+    0, 7, 3,
+    3, 7, 6,
+    3, 6, 2,
+    2, 6, 5,
+    2, 5, 1,
+    1, 5, 4,
+    1, 4, 0,
+    4, 5, 6,
+    4, 6, 7
+};
+
+
 
 int main()
 {
@@ -49,8 +77,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    //glfw window creation
-    //--------------------
+
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "FPS", NULL, NULL);
     if (window == NULL)
     {
@@ -61,18 +88,15 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    //tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    //glad: load all OpenGL function pointers
-    //---------------------------------------
+
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
 
-    //tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
     stbi_set_flip_vertically_on_load(true);
 
     //configure global opengl state
@@ -82,13 +106,43 @@ int main()
     //build and compile shaders
     //-------------------------
     Shader ourShader("model_loading.vs", "model_loading.fs");
+    Shader lightShader("basic_lighting.vs", "basic_lighting.fs");
+
+    // Shader for light cube
+    // Generates Vertex Array Object and binds it
+    VAO lightVAO;
+    lightVAO.Bind();
+    // Generates Vertex Buffer Object and links it to vertices
+    VBO lightVBO(lightVertices, sizeof(lightVertices));
+    // Generates Element Buffer Object and links it to indices
+    EBO lightEBO(lightIndices, sizeof(lightIndices));
+    // Links VBO attributes such as coordinates and colors to VAO
+    lightVAO.LinkAttrib(lightVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
+    // Unbind all to prevent accidentally modifying them
+    lightVAO.Unbind();
+    lightVBO.Unbind();
+    lightEBO.Unbind();
+
+    glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
+    glm::mat4 lightModel = glm::mat4(1.0f);
+    lightModel = glm::translate(lightModel, lightPos);
+
+    glm::vec3 pyramidPos = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::mat4 pyramidModel = glm::mat4(1.0f);
+    pyramidModel = glm::translate(pyramidModel, pyramidPos);
+
+    lightShader.use();
+    glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
+    glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 
     //load Game Objects
     //-----------
     GameObject* obj2 = new GameObject("resources/pyramid/pyramid.obj", glm::vec3(10.0f, 14.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), 3.0f);
-    GameObject* obj3 = new GameObject("resources/terrain/terrain.obj", glm::vec3(-10.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), 5.0f);
+    GameObject* obj3 = new GameObject("resources/curve/curve.obj", glm::vec3(-10.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), 5.0f);
     GameObject* obj4 = new GameObject("resources/dragon/dragon.obj", glm::vec3(40.0f, 10.0f, 3.0f), glm::vec3(3.0f, 3.0f, 3.0f), 2.0f);
     GameObject* obj1 = new GameObject("resources/mesa01/mesa01.obj", glm::vec3(5.0f, 0.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f),8.0f);
+
 
     Player * player = new Player("resources/cube/cube.obj", glm::vec3(20.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f),camera, window);
 
@@ -98,24 +152,19 @@ int main()
     gameObjects.push_back(obj4);
     gameObjects.push_back(obj1);
 
-
-    //draw in wireframe
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-    //render loop
-    //-----------
     while (!glfwWindowShouldClose(window))
     {
-        //per-frame time logic
-        //--------------------
+
+        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
         //Camera
-            // Handles camera inputs
         camera->Inputs(window);
-        // Updates and exports the camera matrix to the Vertex Shader
+        ourShader.use();
         camera->Matrix(90.0f, 0.1f, 100.0f, ourShader, "camMatrix");
 
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
@@ -129,54 +178,38 @@ int main()
             isFirstMouse = true;
         }
 
+        lightShader.use();
+        camera->Matrix(90.0f, 0.1f, 100.0f, lightShader, "camMatrix");
 
+        lightVAO.Bind();
+        glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 
-
-
-        //render
-        //------
-        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        //don't forget to enable shader before setting uniforms
-        ourShader.use();
-
-        
         for (int i = 0; i < gameObjects.size(); i++) {
-            if (!gameObjects[i]->destroy) { 
-                gameObjects[i]->Update(deltaTime, ourShader); 
-                if (gameObjects[i]->Collision(gameObjects) ) {
+            if (!gameObjects[i]->destroy) {
+                gameObjects[i]->Update(deltaTime, lightShader);
+                if (gameObjects[i]->Collision(gameObjects)) {
                     gameObjects[i]->destroy = true;
                 }
             }
-            else { 
+            else {
                 delete gameObjects[i];
-                gameObjects.erase(gameObjects.begin() + i); 
+                gameObjects.erase(gameObjects.begin() + i);
             }
         }
 
-        //glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        //-------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    //glfw: terminate, clearing all previously allocated GLFW resources.
-    //------------------------------------------------------------------
+    lightVAO.Delete();
+    lightVBO.Delete();
+    lightEBO.Delete();
     glfwTerminate();
     return 0;
 }
 
-//process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-//---------------------------------------------------------------------------------------------------------
-
-
-//glfw: whenever the window size changed (by OS or user resize) this callback function executes
-//---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    //make sure the viewport matches the new window dimensions; note that width and 
-    //height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
 

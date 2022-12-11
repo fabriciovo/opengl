@@ -18,8 +18,6 @@ void GameObject::Update(float deltaTime, Shader shader)
 {
     shader.setMat4("model", this->GetTransformMatrix());
     this->model3D->Draw(shader);
-
-
 }
 
 glm::mat4 GameObject::GetTransformMatrix()
